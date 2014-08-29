@@ -15,10 +15,22 @@ setup(
     include_package_data=True,
     install_requires=[
         'setuptools',
+        'six',
     ],
+    test_suite='tests',
     entry_points={
         'flake8.extension': [
-            'B20 = flakey.checks:BannedFunctionChecker',
+            'B = flakey.checks:BannedFunctionChecker',
         ],
     },
+    classifiers=[
+        'Development Status :: 2 - Pre-Alpha',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: BSD License',
+        'Natural Language :: English',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+    ],
 )
