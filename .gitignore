@@ -1,0 +1,10 @@
+*.py[cod]
+
+# Vim
+*~
+*.swp
+*.swo
+
+.vagrant/
+*/build/
+*.egg-info
