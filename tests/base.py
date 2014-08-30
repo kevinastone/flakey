@@ -8,12 +8,9 @@ except ImportError:
 
 
 class BaseCheckerTestCase(unittest.TestCase):
-    fixture = 'function_example.py'
-    function_name = 'django.utils.strip_tags'
-
     def _get_fixture(self, filename):
-        fixture_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'fixtures', self.fixture)
+        fixture_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'fixtures', filename)
         return file(fixture_path)
 
-    def setUp(self):
-        self.tree = ast.parse(self._get_fixture(self.fixture).read())
+    def get_tree(self, fixture):
+        return ast.parse(self._get_fixture(fixture).read())
