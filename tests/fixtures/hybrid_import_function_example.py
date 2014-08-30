@@ -1,6 +1,6 @@
 from alpha import bravo
  
 bravo.charlie('asdf')
- 
-def third_func():
+
+def some_func():
     bravo.charlie('asdf')

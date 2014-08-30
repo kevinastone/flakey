@@ -16,6 +16,7 @@ setup(
     install_requires=[
         'setuptools',
         'six',
+        'astroid',
     ],
     test_suite='tests',
     entry_points={

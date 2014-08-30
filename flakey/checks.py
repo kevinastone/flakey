@@ -2,40 +2,8 @@ import ast
 
 from . import __version__
 
-
-class FunctionVisitor(ast.NodeVisitor):
-    def __init__(self, *targets):
-        self.targets = set(targets)
-        self.import_froms = {}
-        self.matches = []
-
-    def visit_Import(self, node):
-        for name in node.names:
-            self.import_froms[name.asname or name.name] = None
-
-    def visit_ImportFrom(self, node):
-        for name in node.names:
-            self.import_froms[name.asname or name.name] = node.module
-
-    def get_full_name(self, node):
-        parts = []
-        while node:
-            if getattr(node, 'id', None):
-                parts.append(node.id)
-                break
-            else:
-                parts.append(node.attr)
-                node = node.value
-        parts.reverse()
-        if parts[0] in self.import_froms:
-            parts.insert(0, self.import_froms[parts[0]])
-        return '.'.join(parts)
-
-    def visit_Call(self, node):
-        name = self.get_full_name(node.func)
-        full_name = '.'.join(pkg for pkg in [self.import_froms.get(name, None), name] if pkg)
-        if full_name in self.targets:
-            self.matches.append((node, full_name))
+from .parser import rebuild_ast
+from .traverse import identify_called_functions
 
 
 class BannedFunctionChecker(object):
@@ -44,13 +12,15 @@ class BannedFunctionChecker(object):
     version = __version__
     _error_tmpl = "{code} {func} is banned"
     functions = {
+        'datetime.datetime.now': 'B101',
+        'datetime.datetime.utcnow': 'B102',
     }
     
     def __init__(self, tree, filename=None):
-        self.tree = tree
+        self.tree = rebuild_ast(tree)
+        self.filename = filename
 
     def run(self):
-        visitor = FunctionVisitor(*self.functions.keys())
-        visitor.visit(self.tree)
-        for node, func_name in visitor.matches:
-            yield node.lineno, 0, self._error_tmpl.format(code=self.functions[func_name], func=func_name), type(self)
+        for line_number, column, func_name in identify_called_functions(self.tree):
+            if func_name in self.functions.keys():
+                yield line_number, column, self._error_tmpl.format(code=self.functions[func_name], func=func_name), type(self)
