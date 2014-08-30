@@ -4,7 +4,7 @@ from flakey.checks import BannedFunctionChecker
 
 
 class TestBannedFunctionTestCase(BaseCheckerTestCase):
-    function_name = 'django.utils.strip_tags'
+    function_name = 'alpha.bravo.charlie'
 
     def test_import_from(self):
         class CustomBannedFunctionChecker(BannedFunctionChecker):

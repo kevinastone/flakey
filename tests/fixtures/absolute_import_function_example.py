@@ -1,6 +1,6 @@
-import django.utils
+import alpha.bravo
 
-django.utils.strip_tags('asdf')
+alpha.bravo.charlie('asdf')
 
 def another_func():
-    django.utils.strip_tags('asdf')
+    alpha.bravo.charlie('asdf')

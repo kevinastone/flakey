@@ -1,6 +1,6 @@
-from django import utils
+from alpha import bravo
  
-utils.strip_tags('asdf')
+bravo.charlie('asdf')
  
 def third_func():
-    utils.strip_tags('asdf')
+    bravo.charlie('asdf')

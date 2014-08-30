@@ -44,8 +44,6 @@ class BannedFunctionChecker(object):
     version = __version__
     _error_tmpl = "{code} {func} is banned"
     functions = {
-        'django.utils.strip_tags': 'B201',
-        'urllib.urlencode': 'B202',
     }
     
     def __init__(self, tree, filename=None):

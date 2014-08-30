@@ -1,6 +1,6 @@
-from django.utils import strip_tags
+from alpha.bravo import charlie
 
-strip_tags('asdf')
+charlie('asdf')
 
 def some_func():
-    strip_tags('asdf')
+    charlie('asdf')
