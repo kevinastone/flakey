@@ -5,8 +5,10 @@
 *.swp
 *.swo
 
+# Environments
 .vagrant/
 build
 *.egg-info
 .env
 .env3
+.tox
