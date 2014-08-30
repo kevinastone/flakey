@@ -1,6 +1,8 @@
-from .base import BaseCheckerTestCase
+import unittest
 
 from flakey.checks import BannedFunctionChecker
+
+from .base import BaseCheckerTestCase
 
 
 class TestBannedFunctionTestCase(BaseCheckerTestCase):
@@ -45,6 +47,22 @@ class TestBannedFunctionTestCase(BaseCheckerTestCase):
         line_numbers = [err[0] for err in results]
         self.assert_items_equal(line_numbers, [3, 6])
 
+    def test_function_returns(self):
+        """
+        Ensure we can resolve functions returned by other functions
+        """
+        class CustomBannedFunctionChecker(BannedFunctionChecker):
+            functions = {
+                self.function_name: 'B201',
+            }
+
+        tree = self.get_tree('function_returning_function_example.py')
+        checker = CustomBannedFunctionChecker(tree)
+        results = list(checker.run())
+        line_numbers = [err[0] for err in results]
+        self.assert_items_equal(line_numbers, [6])
+
+    @unittest.skip("Lambdas not supported yet")
     def test_lambda(self):
         """
         We can't parse lambdas are functions returns yet, but at least test it doesn't explode.
@@ -58,4 +76,4 @@ class TestBannedFunctionTestCase(BaseCheckerTestCase):
         checker = CustomBannedFunctionChecker(tree)
         results = list(checker.run())
         line_numbers = [err[0] for err in results]
-        self.assert_items_equal(line_numbers, [6])
+        self.assert_items_equal(line_numbers, [4])

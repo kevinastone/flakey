@@ -35,7 +35,7 @@ def traverse(node, ctx=None):
         return ctx
     elif isinstance(node, nodes.Import):
         return ctx
-    elif isinstance(node, scoped_nodes.Function):
+    elif isinstance(node, scoped_nodes.Function) or isinstance(node, scoped_nodes.Lambda):
         return ctx
     elif isinstance(node, scoped_nodes.Class):
         return ctx
