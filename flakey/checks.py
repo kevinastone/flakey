@@ -33,7 +33,7 @@ class FunctionVisitor(ast.NodeVisitor):
 
     def visit_Call(self, node):
         name = self.get_full_name(node.func)
-        full_name = '.'.join([pkg for pkg in self.import_froms.get(name, None), name if pkg])
+        full_name = '.'.join(pkg for pkg in [self.import_froms.get(name, None), name] if pkg)
         if full_name in self.targets:
             self.matches.append((node, full_name))
 
