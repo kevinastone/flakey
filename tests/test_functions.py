@@ -72,7 +72,7 @@ class TestBannedFunctionTestCase(BaseCheckerTestCase):
                 self.function_name: 'B201',
             }
 
-        tree = self.get_tree('function_returning_function_example.py')
+        tree = self.get_tree('lambda_example.py')
         checker = CustomBannedFunctionChecker(tree)
         results = list(checker.run())
         line_numbers = [err[0] for err in results]
