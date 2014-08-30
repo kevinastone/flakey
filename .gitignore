@@ -6,6 +6,6 @@
 *.swo
 
 .vagrant/
-*/build/
+build
 *.egg-info
 .env
