@@ -15,7 +15,7 @@ class BannedFunctionChecker(object):
         'datetime.datetime.now': 'B101',
         'datetime.datetime.utcnow': 'B102',
     }
-    
+
     def __init__(self, tree, filename=None):
         self.tree = rebuild_ast(tree)
         self.filename = filename
