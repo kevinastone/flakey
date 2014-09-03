@@ -18,7 +18,7 @@ def lookup(node):
     raise NotFoundException(node)
 
 
-def resolve_call(node, ctx):
+def lookup_call(node, ctx):
     context = ctx[:]
     func_node = lookup(node.func)
     for return_node in func_node.nodes_of_class(nodes.Return):
@@ -30,6 +30,17 @@ def resolve_call(node, ctx):
         raise NotFoundException(func_node)
 
 
+def lookup_assignment(node, ctx):
+    ctx.pop()
+    # return node.statement()
+    assign = node.parent
+    if isinstance(assign, nodes.Assign):
+        return assign.value
+    else:
+        return node.infered()[0]
+    # return assign.value
+
+
 def trace(node, ctx=None):
     if ctx is None:
         ctx = []
@@ -38,10 +49,7 @@ def trace(node, ctx=None):
         # ctx.append(node.attrname)
         return trace(node.expr, ctx)
     elif isinstance(node, nodes.AssName):
-        assign = node.parent
-        # assert ctx[-1] == node.name
-        ctx.pop()
-        return trace(assign.value, ctx)
+        return trace(lookup_assignment(node, ctx), ctx)
     elif isinstance(node, nodes.Name):
         ctx.append(node)
         # ctx.append(node.name)
@@ -57,7 +65,7 @@ def trace(node, ctx=None):
     elif isinstance(node, scoped_nodes.Class):
         return ctx
     elif isinstance(node, nodes.CallFunc):
-        return resolve_call(node, ctx)
+        return lookup_call(node, ctx)
     else:
         raise NotFoundException(node)
 

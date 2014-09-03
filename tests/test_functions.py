@@ -77,3 +77,18 @@ class TestBannedFunctionTestCase(BaseCheckerTestCase):
         results = list(checker.run())
         line_numbers = [err[0] for err in results]
         self.assert_items_equal(line_numbers, [4])
+
+    def test_attribute(self):
+        """
+        Try to parse attribute assignment.
+        """
+        class CustomBannedFunctionChecker(BannedFunctionChecker):
+            functions = {
+                self.function_name: 'B201',
+            }
+
+        tree = self.get_tree('attribute_assignment_example.py')
+        checker = CustomBannedFunctionChecker(tree)
+        results = list(checker.run())
+        line_numbers = [err[0] for err in results]
+        self.assert_items_equal(line_numbers, [4])
