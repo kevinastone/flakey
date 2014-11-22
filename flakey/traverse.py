@@ -88,5 +88,5 @@ def identify_called_functions(root):
             symbols = list(resolve(history))
             full_name = '.'.join(reversed(symbols))
             yield (f.lineno, f.col_offset, full_name)
-        except NotFoundException as ex:
+        except NotFoundException:
             pass

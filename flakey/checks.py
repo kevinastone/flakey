@@ -1,5 +1,3 @@
-import ast
-
 from . import __version__
 
 from .parser import rebuild_ast
