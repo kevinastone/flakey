@@ -1,5 +1,5 @@
 # coding: utf-8
-from astroid import nodes, scoped_nodes
+from astroid import nodes, scoped_nodes, YES
 
 
 class NotFoundException(Exception):
@@ -20,14 +20,15 @@ def lookup(node):
 
 def lookup_call(node, ctx):
     context = ctx[:]
-    func_node = lookup(node.func)
-    for return_node in func_node.nodes_of_class(nodes.Return):
-        context = ctx[:]
-        result = trace(return_node.value, context)
-        if result:
-            return result
-    else:
-        raise NotFoundException(func_node)
+    trace(node.func, context)
+    if context and isinstance(context[-1], scoped_nodes.Function):
+        func_node = context[-1]
+        for return_node in func_node.nodes_of_class(nodes.Return):
+            sub_context = ctx[:]
+            result = trace(return_node.value, sub_context)
+            if result:
+                return result
+    return context
 
 
 def lookup_assignment(node, ctx):
@@ -41,31 +42,31 @@ def lookup_assignment(node, ctx):
     # return assign.value
 
 
-def trace(node, ctx=None):
+def trace(node, ctx=None):  # flake8: noqa
     if ctx is None:
         ctx = []
     if isinstance(node, nodes.Getattr):
         ctx.append(node)
-        # ctx.append(node.attrname)
         return trace(node.expr, ctx)
     elif isinstance(node, nodes.AssName):
         return trace(lookup_assignment(node, ctx), ctx)
     elif isinstance(node, nodes.Name):
         ctx.append(node)
-        # ctx.append(node.name)
         return trace(lookup(node), ctx)
     elif isinstance(node, nodes.From):
         ctx.append(node)
-        # ctx.append(node.modname)
         return ctx
     elif isinstance(node, nodes.Import):
         return ctx
     elif isinstance(node, scoped_nodes.Function) or isinstance(node, scoped_nodes.Lambda):
+        ctx.append(node)
         return ctx
     elif isinstance(node, scoped_nodes.Class):
         return ctx
     elif isinstance(node, nodes.CallFunc):
         return lookup_call(node, ctx)
+    elif node is YES:
+        return ctx
     else:
         raise NotFoundException(node)
 
@@ -80,11 +81,11 @@ def resolve(ctx):
             yield node.modname
 
 
-def identify_called_functions(root):
+def identify_called_functions(root, func=None):
     fs = root.nodes_of_class(nodes.CallFunc)
     for f in fs:
         try:
-            history = trace(f.func)
+            history = trace(lookup(f))
             symbols = list(resolve(history))
             full_name = '.'.join(reversed(symbols))
             yield (f.lineno, f.col_offset, full_name)
