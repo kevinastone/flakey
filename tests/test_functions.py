@@ -78,6 +78,7 @@ class TestBannedFunctionTestCase(BaseCheckerTestCase):
         line_numbers = [err[0] for err in results]
         self.assert_items_equal(line_numbers, [4])
 
+    @unittest.skip("Function arguments not supported yet")
     def test_attribute(self):
         """
         Try to parse attribute assignment.
